@@ -25,66 +25,69 @@ allowed using an instance of the PasswordValidator class.
  */
 
 
-
+Validate Validator = new Validate();
 Console.WriteLine("Password Validator");
+
 while (true) 
 {
     Console.Write("Password: ");
     // Insert password
-    string Password = Console.ReadLine();
+    string? Password = Console.ReadLine();
+
+    if (Password == null)
+        break;
 
     // Check the password
-    Validate Validator = new Validate(Password);
+    if(Validator.CheckPassword(Password))
+    {
+        Console.WriteLine("Password is valid");
+    }
+    else
+    {
+        Console.WriteLine("Password is invalid");
+        Console.WriteLine("Password must have at least an Uppercase, a Lowercase, and a Digit");
+        Console.WriteLine("Password length must be between 6 and 13, Character 'T' and symbol '&' is not allowed");
+    }
 
     // See if the password is ok
-    Validator.CheckPassword(Password);
+    
 }
 
 public class Validate 
 {
-    private string _password { get; }
-
-    public Validate(string Password) 
+    public bool CheckPassword(string _password)
     {
-        _password = Password;
-        //Console.WriteLine($"{_password}");
-    }
+        bool uppercase = false;
+        bool lowercase = false;
+        bool digit = false;
+        bool length = false;
 
-    public void CheckPassword(string _password)
-    {
-        int UpperCount = 0;
-        int LowerCount = 0;
-        int NumCount = 0;
-        int LetterCount = 0;
-        int InvalidCount = 0;
-        foreach (char letter in _password)
+        // Check password length between 6 - 13
+        if (_password.Length >= 6 && _password.Length <= 13)
+            length = true;
+
+        foreach(char letter in _password)
         {
-            if (letter.Equals('T') || letter.Equals('t') || letter.Equals('&'))
-            {
-                InvalidCount += 1;
-            }
-            else if (char.IsUpper(letter) == true)
-            {
-                UpperCount += 1;
-                LetterCount += 1;
-            }
-            else if (char.IsLower(letter) == true)
-            {
-                LowerCount += 1;
-                LetterCount += 1;
-            }
-            else if (char.IsDigit(letter) == true)
-            { 
-                NumCount += 1;
-                LetterCount += 1;
-            }
+            // Check letter Uppercase
+            if (char.IsUpper(letter))
+                uppercase = true;
+
+            // Check letter Lowercase
+            if (char.IsLower(letter))
+                lowercase = true;
+
+            // Check letter for Digits
+            if (char.IsDigit(letter))
+                digit = true;
+
+            // Check letter T and &
+            if (letter.Equals('T') || letter.Equals('&'))
+                return false;
         }
-        if (UpperCount >= 1 && LowerCount >= 1 && NumCount >= 1 && (LetterCount >= 6 && LetterCount <= 13) && InvalidCount <= 0)
-            Console.WriteLine("The password is valid");
-        else
-        {
-            Console.WriteLine("Password is invalid");
-            Console.WriteLine("The password must contain at least an Uppercase, a Lowercase, and a Number");
-        }
+        
+        if((uppercase && lowercase && digit && length) == true)
+            return true;
+        else 
+            return false;
     }
 }
